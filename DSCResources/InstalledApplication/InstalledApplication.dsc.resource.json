@@ -1,0 +1,141 @@
+{
+  "$schema": "https://raw.githubusercontent.com/PowerShell/DSC/main/schemas/2024/04/resource/manifest.json",
+  "type": "AppDsc/InstalledApplication",
+  "version": "1.0.0",
+  "description": "Manages installed Windows applications.",
+  "kind": "resource",
+  "get": {
+    "executable": "powershell",
+    "args": ["-NoProfile", "-NonInteractive", "-File", "InstalledApplication.ps1", "get"],
+    "input": "stdin"
+  },
+  "test": {
+    "executable": "powershell",
+    "args": ["-NoProfile", "-NonInteractive", "-File", "InstalledApplication.ps1", "test"],
+    "input": "stdin"
+  },
+  "set": {
+    "executable": "powershell",
+    "args": ["-NoProfile", "-NonInteractive", "-File", "InstalledApplication.ps1", "set"],
+    "input": "stdin",
+    "rebootRequired": true
+  },
+  "export": {
+    "executable": "powershell",
+    "args": ["-NoProfile", "-NonInteractive", "-File", "InstalledApplication.ps1", "export"]
+  },
+  "schema": {
+    "embedded": {
+      "type": "object",
+      "properties": {
+        "Name": {
+          "type": "string",
+          "description": "Friendly application name to match in the registry."
+        },
+        "Ensure": {
+          "type": "string",
+          "enum": ["Present", "Absent"],
+          "default": "Present",
+          "description": "Whether the application should be present or absent."
+        },
+        "InstallerPath": {
+          "type": ["string", "null"],
+          "description": "Local path, UNC path, or URL to the installer file (.msi or .exe)."
+        },
+        "InstallerArguments": {
+          "type": ["string", "null"],
+          "description": "Silent installation arguments to pass to the installer."
+        },
+        "ProductCode": {
+          "type": ["string", "null"],
+          "description": "The MSI product code GUID (including braces) of the application."
+        },
+        "DisplayNameRegex": {
+          "type": ["string", "null"],
+          "description": "Regular expression used to match the application's DisplayName."
+        },
+        "MinimumVersion": {
+          "type": ["string", "null"],
+          "description": "The minimum version required. If the installed version is lower, the installer will run."
+        },
+        "Architecture": {
+          "type": "string",
+          "enum": ["x86", "x64", "Any"],
+          "default": "Any",
+          "description": "The target installation architecture."
+        },
+        "InstallTimeoutSeconds": {
+          "type": "integer",
+          "default": 1800,
+          "description": "The timeout in seconds to wait for the installer to exit."
+        },
+        "DetectionMethod": {
+          "type": "string",
+          "enum": ["Registry", "ProductCode", "CustomScript"],
+          "default": "Registry",
+          "description": "The method used to detect whether the application is installed."
+        },
+        "CustomDetectionScript": {
+          "type": ["string", "null"],
+          "description": "A PowerShell script block text returning true or false."
+        },
+        "LogPath": {
+          "type": ["string", "null"],
+          "description": "Optional log file path for installation tracking."
+        },
+        "RebootBehavior": {
+          "type": "string",
+          "enum": ["Ignore", "RequireIfInstallerRequests"],
+          "default": "Ignore",
+          "description": "Reboot behavior if the installer returns exit code 3010."
+        },
+        "AllowNonMsiUninstall": {
+          "type": "boolean",
+          "default": false,
+          "description": "Allow running non-MSI uninstallation strings when Ensure is Absent."
+        },
+        "Installed": {
+          "type": "boolean",
+          "readOnly": true,
+          "description": "Whether the application is currently installed on the system."
+        },
+        "DisplayName": {
+          "type": ["string", "null"],
+          "readOnly": true,
+          "description": "The actual DisplayName of the application found in the registry."
+        },
+        "DisplayVersion": {
+          "type": ["string", "null"],
+          "readOnly": true,
+          "description": "The actual DisplayVersion of the application found in the registry."
+        },
+        "Publisher": {
+          "type": ["string", "null"],
+          "readOnly": true,
+          "description": "The actual Publisher of the application found in the registry."
+        },
+        "InstallLocation": {
+          "type": ["string", "null"],
+          "readOnly": true,
+          "description": "The actual InstallLocation of the application found in the registry."
+        },
+        "UninstallString": {
+          "type": ["string", "null"],
+          "readOnly": true,
+          "description": "The actual UninstallString of the application found in the registry."
+        },
+        "RegistryKeyPath": {
+          "type": ["string", "null"],
+          "readOnly": true,
+          "description": "The actual RegistryKeyPath of the application found in the registry."
+        },
+        "DetectedArchitecture": {
+          "type": ["string", "null"],
+          "readOnly": true,
+          "description": "The actual Architecture of the application found in the registry."
+        }
+      },
+      "required": ["Name"]
+    }
+  }
+}
